@@ -98,43 +98,44 @@
     function onInsertImageClick() {
         var button = document.getElementById('insert-license-button');
         if (button) button.disabled = true;
-        updateStatus('正在插入营业执照图片...');
 
-        // 确保图片URL是有效的
+        // Ensure the image URL is valid
         if (!pluginConfig.licenseImageUrl) {
-            updateStatus('图片URL无效', true);
+            console.log('图片URL无效');
+            if (button) button.disabled = false;
             return;
         }
 
-        // 先传图片URL到沙箱变量
+        // Pass the image URL to the sandbox variable
         Asc.scope.licenseImageUrl = pluginConfig.licenseImageUrl;
 
         window.Asc.plugin.callCommand(function () {
             var oDocument = Api.GetDocument();
             if (!oDocument) return;
 
-            // 获取当前光标位置
-            var oSelection = oDocument.GetSelection();
-            if (!oSelection) {
-                updateStatus('无法获取光标位置', true);
+            // Get the current paragraph where the cursor is located
+            var oParagraph = oDocument.GetCurrentParagraph();
+            if (!oParagraph) {
+                console.log('无法获取光标位置');
+                if (button) button.disabled = false;
                 return;
             }
+            // 1 mm = 36000 EMUs, 1 inch = 914400 EMUs.
+            var width = 10 * 36000 * 10;  // 10 cm
+            var height = 8 * 36000 * 10;;  // 8 cm
+            // Add a picture content control at the cursor location
+            var oPictureControl = oDocument.AddPictureContentControl(width, height);
+            if (oPictureControl) {
+                console.log('添加图片:', Asc.scope.licenseImageUrl);
+                // Set the image for the picture content control using the provided URL
+                oPictureControl.SetPicture(Asc.scope.licenseImageUrl);
+                console.log('营业执照图片插入成功');
+            } else {
+                console.log('插入图片失败');
+            }
 
-            // 创建图像对象，使用 CreateImage
-            var oDrawing = Api.CreateImage(Asc.scope.licenseImageUrl, 5000000, 6000000);  // 设置合适的图片尺寸
-
-            // 设置图片的属性（如位置）
-            oDrawing.SetWrappingStyle("inFront");  // 图片覆盖文本
-            oDrawing.SetHorPosition("cursor");   // 设置水平位置为光标位置
-            oDrawing.SetVerPosition("cursor");   // 设置垂直位置为光标位置
-
-            // 将图像插入光标所在的位置
-            oSelection.InsertDrawing(oDrawing);
-
-            console.log('营业执照图片插入成功');
         }, false, false, function () {
-            updateStatus('营业执照图片插入完成！');
-            console.log('营业执照图片插入成功');
+            console.log('图片插入过程完成');
             if (button) button.disabled = false;
         });
     }
