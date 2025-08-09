@@ -13,33 +13,12 @@
         }
     }
 
-    function replaceTextInDocument(oDocument, replacements) {
-        if (!oDocument) return;
-
-        try {
-            oDocument.CreateNewHistoryPoint();
-        } catch (e) {
-            console.error("创建历史点失败", e);
-        }
-
-        var body = oDocument.GetBody();
-        for (var key in replacements) {
-            if (replacements.hasOwnProperty(key)) {
-                var value = replacements[key];
-                if (value !== null && value !== undefined) {
-                    console.log('替换:', key, '->', value);
-                    body.Replace(key, value);
-                }
-            }
-        }
-    }
-
     function onButtonClick() {
         var button = document.getElementById('fill-button');
         if (button) button.disabled = true;
         updateStatus('正在读取文档内容...');
 
-        // 第一次callCommand：获取文档内容，return返回给callback
+        // 第一次callCommand：获取文档内容并返回
         window.Asc.plugin.callCommand(function() {
             var oDocument = Api.GetDocument();
             if (!oDocument) return '';
@@ -47,10 +26,10 @@
             var text = oDocument.GetText() || '';
             console.log('callCommand中获取文档内容:', text);
 
-            // 返回字符串给回调
+            // 返回文档文本给回调函数
             return text;
         }, false, false, function(returnedText) {
-            // 这里的returnedText就是callCommand中return的文档文本
+            // 这里的returnedText就是callCommand中返回的文档文本
             console.log('回调收到文档内容:', returnedText);
 
             if (!returnedText || returnedText.length === 0) {
@@ -74,26 +53,40 @@
             .then(data => {
                 if (!data.success) throw new Error(data.error || 'AI服务失败');
 
-                var replacements = data.replacements || {};
-                if (Object.keys(replacements).length === 0) {
+                var replacements = data.replacements || [];
+                if (replacements.length === 0) {
                     updateStatus('未检测到可替换内容');
                     if (button) button.disabled = false;
                     return;
                 }
 
-                // 第二次callCommand：执行替换
-                Asc.scope.replacements = replacements;
-                console.log('替换内容:', replacements);
+                // 第二次callCommand：执行替换操作
+                Asc.scope.replacements = JSON.stringify(replacements); // 存储为字符串
+
                 window.Asc.plugin.callCommand(function() {
-                    var reps = JSON.parse(Asc.scope.replacements);
+                    var reps = JSON.parse(Asc.scope.replacements); // 解析为对象
                     var oDoc = Api.GetDocument();
                     if (!oDoc) return;
 
-                    replaceTextInDocument(oDoc, reps);
+                    // 遍历替换内容，执行替换操作
+                    reps.forEach(function(replacement) {
+                        var target = replacement.target;
+                        var value = replacement.value;
+                        if (target && value !== undefined && value !== null) {
+                            console.log('替换:', target, '->', value);
+
+                            // 使用 SearchAndReplace 执行替换
+                            oDoc.SearchAndReplace({
+                                searchString: target,
+                                replaceString: value
+                            });
+                        }
+                    });
+
                 }, true, true, function() {
                     updateStatus('文档填充完成！');
-                    if (button) button.disabled = false;
                     console.log('替换完成');
+                    if (button) button.disabled = false;
                 });
             })
             .catch(err => {
