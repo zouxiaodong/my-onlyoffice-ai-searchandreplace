@@ -1,0 +1,29 @@
+{
+    "name": "AI文档智能填充",
+    "guid": "asc.{FEC442B4-1C01-4742-BD8B-0DD09717751B}",
+    "baseUrl": "",
+    "variations": [
+        {
+            "description": "AI文档智能填充",
+            "url": "index.html",
+            "icons": [
+                "resources/img/icon.png",
+                "resources/img/icon@2x.png"
+            ],
+            "EditorsSupport": ["word"],
+            "isViewer": false,
+            "isVisual": true,
+            "isModal": false,
+            "isInsideMode": true,
+            "initDataType": "button",
+            "initData": "",
+            "isUpdateOleOnResize": false,
+            "buttons": [
+                {
+                    "text": "AI一键填充",
+                    "toolbar": true
+                }
+            ]
+        }
+    ]
+}

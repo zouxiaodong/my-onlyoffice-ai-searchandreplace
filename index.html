@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>AI文档智能填充</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .status {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            height: 20px;
+        }
+        .error {
+            color: #ff0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>AI文档智能填充</h3>
+        <p>点击下方按钮，插件将获取文档内容并发送到后端AI服务进行分析和填充。</p>
+        <button id="fill-button">AI一键填充</button>
+        <div class="status" id="status-message"></div>
+    </div>
+	<script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js"></script>
+    <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+    <link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
+    <script type="text/javascript" src="scripts/aifilter.js"></script>
+</body>
+</html>
