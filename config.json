@@ -20,9 +20,13 @@
             "isUpdateOleOnResize": false,
             "buttons": [
                 {
-                    "text": "AI一键填充",
-                    "toolbar": true
-                }
+					"text": "AI一键填充",
+					"toolbar": true
+                },
+				{
+					"text": "插入营业执照",
+					"toolbar": true
+				}
             ]
         }
     ]
